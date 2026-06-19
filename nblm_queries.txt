@@ -1,0 +1,8 @@
+# One YouTube search query per line. Blank lines and #-comments are ignored.
+# The scheduled GitHub Action exports the top N transcripts for each query
+# into nblm_sources/ and commits them.
+#
+# Edit these to whatever topics you want to keep flowing into NotebookLM:
+
+machine learning basics
+python decorators explained

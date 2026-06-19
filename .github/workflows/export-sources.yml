@@ -1,0 +1,84 @@
+name: Export NotebookLM sources
+
+# Runs the YouTube -> NotebookLM exporter on a schedule (and on demand),
+# then commits the refreshed source files back to the repo. The raw URLs of
+# the committed files under nblm_sources/ can then be added to NotebookLM as
+# "Website" sources.
+
+on:
+  schedule:
+    # 06:00 UTC every Monday. Adjust the cron as you like.
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+    inputs:
+      query:
+        description: "Ad-hoc YouTube query (overrides nblm_queries.txt for this run)"
+        required: false
+        type: string
+      limit:
+        description: "Videos per query"
+        required: false
+        default: "3"
+        type: string
+
+# Allow the job to push commits back to the repository.
+permissions:
+  contents: write
+
+# Avoid overlapping runs racing on the same files.
+concurrency:
+  group: export-sources
+  cancel-in-progress: false
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run exporter
+        # Inputs are passed via env (never interpolated into the shell) to
+        # avoid script-injection from the workflow_dispatch fields.
+        env:
+          INPUT_QUERY: ${{ github.event.inputs.query }}
+          INPUT_LIMIT: ${{ github.event.inputs.limit }}
+        run: |
+          set -euo pipefail
+          LIMIT="${INPUT_LIMIT:-3}"
+          if [ -n "${INPUT_QUERY:-}" ]; then
+            echo "Ad-hoc query: $INPUT_QUERY (limit $LIMIT)"
+            python notebooklm_export.py youtube "$INPUT_QUERY" -n "$LIMIT" -o nblm_sources
+          elif [ -f nblm_queries.txt ]; then
+            while IFS= read -r q || [ -n "$q" ]; do
+              # skip blanks and # comments
+              [ -z "${q// }" ] && continue
+              case "$q" in \#*) continue ;; esac
+              echo "::group::$q"
+              python notebooklm_export.py youtube "$q" -n "$LIMIT" -o nblm_sources || echo "  (query failed, continuing)"
+              echo "::endgroup::"
+            done < nblm_queries.txt
+          else
+            echo "No query input and no nblm_queries.txt present." >&2
+            exit 1
+          fi
+
+      - name: Commit refreshed sources
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add nblm_sources
+          if git diff --staged --quiet; then
+            echo "No source changes to commit."
+          else
+            git commit -m "chore: refresh NotebookLM sources [skip ci]"
+            git push
+          fi

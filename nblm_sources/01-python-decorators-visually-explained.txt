@@ -1,0 +1,391 @@
+# Python Decorators - Visually Explained
+Source: https://www.youtube.com/watch?v=3tyaO-OE0K0
+Channel: Visually Explained
+Views: 318836
+
+Have you ever seen an at sign on top of
+a function definition before? This is
+decorator syntax in action.
+A decorator like timer deck here is
+itself a function. The purpose of that
+function is to decorate or enhance a
+base function that we pass as an
+argument and return the enhanced
+function.
+By writing at timer deck on top of the
+definition of brew t, we tell Python
+that the base function brew t must be
+enhanced by the decorator timer deck
+before it is used. After receiving the
+base function as an input, the decorator
+bundles it with additional features
+without modifying the base functions
+original code.
+Once these new features are added, the
+decorator returns the enhanced version
+of the function.
+This enhanced version of the function is
+what Python will use whenever brew tea
+is called. In a nutshell, this is how
+decorators work.
+Okay, but what's the point? Why use
+decorators to add on extra code when we
+could simply include the additional
+operations in the original function
+definition?
+Let's see why by developing our tea
+brewing example a bit.
+We'll begin by writing the body of the
+brew tea function.
+The function simply prints brewing tea,
+pauses for a second, and then prints tea
+is ready. Of course, the execution of
+this function will take about 1 second.
+But suppose we want to know the exact
+runtime.
+To do this, we could add lines of code
+to record the start time of a function
+call, the end time of the function call,
+and print the difference between the
+two. Running the code, the function does
+calculate the execution time.
+But there are issues with this approach.
+First, the brew tea function violates
+the single responsibility principle by
+performing two distinct tasks. Brewing
+tea and timing the process.
+In programming, functions should focus
+on a single well-defined responsibility
+to make code reusable.
+In this example, by combining brewing
+and timing, we can't easily reuse the
+timing logic in another function.
+For example, suppose we also have a
+matcha making function
+and we want to time it as well. We could
+do this by rewriting the timing code
+from the brew tea function,
+but duplicating code is not ideal since
+it makes our code base repetitive and
+harder to maintain.
+Decorators offer a great solution to
+these problems. Let's see how. For
+simplicity, we'll first decorate the
+brew tea function. We'll bring back make
+matcha later. Since decorators are just
+functions, to create one, we'll start
+with the keyword deaf.
+In this example, the purpose of our
+decorator is to time the execution of a
+function. So, we'll name it timer deck.
+Remember that decorators take a base
+function as an input.
+So we'll define a parameter called base
+function to represent that input
+function.
+This completes the header of the
+decorator. Let's move to the body. Since
+the goal of a decorator is to build
+[music] an enhanced function and return
+it.
+Let's define that enhanced function.
+The enhanced function will use the base
+function as its foundation. So it should
+include a call to base function.
+From there, we can add the code we want
+to execute before and after the base
+function call. To measure the execution
+time of the base function, we'll record
+the start time before the call,
+the end time after the call,
+and then print the difference.
+And that's it. We've created a decorator
+that takes a base function as an input
+and adds the operations to measure its
+execution time.
+The last step is to tell our decorator
+to return the enhanced function.
+Note that this return statement is part
+of the decorator, not part of the
+enhanced function.
+Great. Now, let's use our timer
+decorator to measure how long the focus
+brew [music] t function takes to run. To
+apply decorators in Python, we have two
+options.
+First, we can call the decorator and
+pass the function we want to decorate as
+an argument.
+Running the code, we get a function
+object.
+This function object is the enhanced
+function that the timer deck returned.
+To call this function later in the
+program, we can give it a name by
+assigning it to a variable, say [music]
+deck brew tea. Calling deck brew tea
+will brew tea and time the execution.
+In contrast, calling brew tea still just
+brews tea.
+Note that when passing a base function
+to a decorator, we simply write the name
+of the function. We do not follow the
+name with parenthesis.
+Adding the parenthesis would immediately
+trigger a bruty function call, which is
+not what we want here. It's also
+important to note when applying
+decorators, we could reassign the
+decorated function back to the original
+function name.
+This approach ensures that every call to
+the original function name brew tea
+automatically includes the timer
+functionality.
+This is quite powerful.
+By using a decorator, we've added
+features to brew tea without modifying
+the original code.
+But at the same time, applying
+decorators this way separates the
+decoration from the function definition.
+This makes it less obvious to someone
+reading this code or to our future
+selves that the base brew function will
+be enhanced.
+Luckily, we can address this drawback
+with the at decorator syntax that we
+mentioned in the beginning. Writing this
+above a function is equivalent to
+applying the decorator manually.
+Running the code, we see that a call to
+brew tea both brews tea and times the
+process.
+The at decorator syntax makes the
+decoration an explicit and visible part
+of the function definition itself.
+For that reason, this syntax is
+generally how decorators are applied in
+Python.
+Now that we have seen how decorators
+help us write focus functions, let's see
+how they also help us reuse code. To do
+this, we'll bring back the make matcha
+function to time it.
+Now that we've defined the timer
+decorator, timing the make matcha
+function is easy.
+We simply write at timer deck above the
+function header and call the function.
+Running the code, we see that a call to
+make matcha both makes matcha and times
+the process.
+Perfect. The at syntax lets us easily
+reuse the decorator and clearly show
+which functions are enhanced.
+But so far we've only decorated simple
+functions that don't have parameters.
+To decorate functions that do have
+parameters, we need to do a bit more
+work. To give ourselves some space to
+work, let's fold the make matcha
+function
+to see how to decorate functions with
+parameters. We'll modify our brew tea
+function to take two arguments. The type
+of tea to brew and how long it should
+steep. We'll use these values inside our
+function to update the first print
+statement and the sleep function.
+Then we'll update our brew tea function
+call to pass the t type green and a
+steep time of one as arguments.
+Now that our brew tea function takes
+arguments, running the code generates an
+error. This error tells us the function
+that we've called takes zero arguments,
+but we gave it two. Wait, what? Haven't
+we defined brew tea to take two
+arguments?
+Well, we did, but remember when we
+decorate brew tea with the timer
+decorator, calling brew tea actually
+triggers a call to the enhanced function
+defined in the decorator
+and enhanced function currently doesn't
+take any arguments.
+We could try to fix this issue by
+creating type and steep time parameters
+in the enhanced function and passing
+those into a base function call. Running
+the code, this fix worked for the brew t
+call, but we get another error when
+Python tries to execute make matcha.
+This happens because we've now specified
+the enhanced function must take exactly
+two arguments.
+The problem is make matcha doesn't take
+any arguments and let's suppose we don't
+want it to. Can we make our decorator
+flexible enough for both functions?
+The answer is yes. But we'll need to
+modify the enhance function header.
+Again, the issue with the current header
+is that it specifies exactly two
+parameters.
+In Python, we can relax this requirement
+and allow a function to take any number
+of inputs using star args and doublestar
+kW args. If you aren't familiar with
+star args and its sister syntax,
+doublestar kws, make sure to check out
+our video linked in the description
+first. To allow enhanced function to
+take any number of positional arguments,
+we replace the explicit type and steep
+time parameters with star args.
+By writing star args in the function
+definition, we're telling Python to pack
+all positional arguments into a tuple
+named args.
+This means that when the brew function
+is called, the arguments green and one
+are passed to the enhance function and
+packed into the args tpple. To use these
+arguments in the base function call, it
+might be tempting to simply pass the
+args tpple.
+However, this won't work because the
+args tpple itself counts as a single
+argument [music] and our base function
+expects two.
+Instead, what we need to do is split the
+tpple into multiple arguments.
+We can do this by applying the unpacking
+operator star to the args tpple. While
+the star arg syntax looks the same in
+both the function definition and the
+function call, Python does something
+different in each case.
+When used in a function call, the star
+operator unpacks a tpple into separate
+positional arguments instead of packing
+positional arguments into a tpple. Since
+our args tpple contains green and one,
+these values will be unpacked into two
+separate arguments.
+Now the number of arguments in the base
+function call matches the number of
+parameters in brew tea. Better yet,
+since enhance function accepts a
+flexible number of arguments, the timer
+decorator will now also work with the
+make matcha function.
+Because the make matcha call passes no
+arguments, the arc tpple is empty. So
+when it's time to unpack the tpple in
+the base function call, there's nothing
+to unpack.
+This is a good thing since make matcha
+has no parameters.
+Running the code, both functions work as
+expected.
+However, if we stop here, our decorator
+isn't as flexible as it could be. For
+example, if in the brew tea function
+call, we instead pass type and steep
+time as keyword arguments,
+our code breaks again.
+To fix this, we need to modify enhance
+function to also accept keyword
+arguments.
+We can do this by adding doublestar kws
+as a parameter.
+In this example, doublestar kws tells
+Python to pack all keyword arguments
+into a dictionary named kwarks.
+So when the brew t function is called
+the keyword arguments t type equals
+green and steep time equals 1 are passed
+into the enhanced function.
+At this point they are all packed into
+the kws [music]
+dictionary as key value pairs.
+To use these arguments we need to pass
+them into the base function.
+Like with args we can't simply pass the
+kws dictionary itself. we need to split
+it into two separate arguments using the
+dictionary unpacking operator double
+star. When used in a function call, the
+double star operator unpacks a
+dictionary [music] into separate keyword
+arguments.
+So during the brew tea function call
+when the kw args dictionary contains
+these key value pairs doublestar kws
+splits up the dictionary into keyword
+arguments typed equals green and steep
+time equals 1. These keyword arguments
+match up with the parameters defined in
+the brew t header.
+Running the code, the keyword arguments
+are now accepted.
+By using star args and double star kW
+args, we've made our timer decorator
+more general and flexible,
+it can take any number of positional or
+keyword arguments and forward them into
+the base function.
+At this point, the only thing preventing
+our decorator from becoming fully
+general and flexible is how it currently
+handles return values or more accurately
+doesn't handle them.
+For example, suppose we want our make
+matcha function to calculate and return
+the optimal time window to drink the
+matcha which is 30 minutes after it's
+prepared.
+We can do this by first importing the
+datetime libraries date time and time
+delta modules.
+modify our make matcha function to
+return a string that says drink matcha
+by now plus 30 minutes and print make
+matcha's output.
+However, running the cell, we get none
+instead of a drink by time. This happens
+because our decorator doesn't yet
+capture and pass along the return value
+from the base function.
+To fix this, we need to modify our
+decorator to capture the return value
+from base function in a variable. then
+return that variable at the end of
+enhanced function.
+Running the cell again, we now get the
+exact time by which we should drink our
+matcha. And our decorator still works
+with brew tea even though it doesn't
+return a value. Awesome. Now our
+decorator is as flexible and general as
+possible.
+It can decorate functions with any
+number of positional or keyword
+arguments thanks to star args and double
+star kws.
+It also supports functions that return
+values without breaking when used with
+functions that don't.
+If you'd like to practice what you've
+learned in this video, check out the
+notebook we created. It [music] has a
+few exercises to get you started.
+We're working on lots more Python
+explainer videos like this one, so be
+sure to subscribe so that you don't miss
+out. If you have any questions or topics
+that you'd like to learn about, let us
+know in the comments below. We'd love to
+hear from you. Thanks for watching.

@@ -1,0 +1,6 @@
+# Keep LF in the repo for files the Linux Action runner executes/parses.
+*.yml   text eol=lf
+*.yaml  text eol=lf
+*.py    text eol=lf
+*.txt   text eol=lf
+*.md    text eol=lf
